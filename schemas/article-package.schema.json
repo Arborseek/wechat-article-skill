@@ -110,13 +110,11 @@
     },
     "qa": {
       "type": "object",
-      "required": ["database_updated"],
       "properties": {
         "content_reviewed": {"type": "boolean"},
         "sources_reviewed": {"type": "boolean"},
         "visuals_reviewed": {"type": "boolean"},
-        "browser_reviewed": {"type": "boolean"},
-        "database_updated": {"type": "boolean"}
+        "browser_reviewed": {"type": "boolean"}
       }
     }
   }

@@ -111,12 +111,11 @@ def main() -> None:
         "article_count": len(manifest_items),
         "seed": args.seed,
         "diversity": args.diversity,
-        "database_updated": False,
         "theme_distribution": dict(sorted(distribution.items())),
         "articles": manifest_items,
     }
     (args.output_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({key: manifest[key] for key in ("article_count", "diversity", "database_updated", "theme_distribution")}, ensure_ascii=False, indent=2))
+    print(json.dumps({key: manifest[key] for key in ("article_count", "diversity", "theme_distribution")}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

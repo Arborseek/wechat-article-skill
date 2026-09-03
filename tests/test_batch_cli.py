@@ -34,7 +34,7 @@ class BatchCliTests(unittest.TestCase):
             )
             manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["article_count"], 2)
-            self.assertFalse(manifest["database_updated"])
+            self.assertNotIn("database_updated", manifest)
             for item in manifest["articles"]:
                 self.assertIn("selection_reason", item)
                 self.assertIn("theme_scores", item)

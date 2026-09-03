@@ -46,5 +46,5 @@
     ]
   },
   "layout": {"theme": "blueprint", "theme_reason": "技术架构型长文", "seed": "wechat-studio-v1"},
-  "qa": {"content_reviewed": false, "sources_reviewed": false, "visuals_reviewed": false, "browser_reviewed": false, "database_updated": false}
+  "qa": {"content_reviewed": false, "sources_reviewed": false, "visuals_reviewed": false, "browser_reviewed": false}
 }

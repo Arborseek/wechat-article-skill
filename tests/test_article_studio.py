@@ -28,7 +28,15 @@ class ArticlePackageTests(unittest.TestCase):
         report = contract.validate_package(package)
         self.assertTrue(report["valid"], report)
         self.assertEqual(package["visuals"]["items"], [])
-        self.assertFalse(package["qa"]["database_updated"])
+        self.assertEqual(
+            package["qa"],
+            {
+                "content_reviewed": False,
+                "sources_reviewed": False,
+                "visuals_reviewed": False,
+                "browser_reviewed": False,
+            },
+        )
 
     def test_interview_hybrid_plan_searches_for_real_portrait(self):
         html = "<h2>职业选择</h2><p>主持人：为什么进入这个行业？</p><p>创始人：我希望解决真实问题。</p>"

@@ -45,7 +45,7 @@
 - Every manifest entry includes category, confidence, feature summary, theme scores, and a human-readable selection reason.
 - Style counts are reasonably varied after respecting content compatibility; equal counts are not required.
 - Re-running with the same inputs, seed, and diversity mode produces the same assignments.
-- Database replacement remains false until the user approves previews.
+- Every input article produces exactly one standalone HTML file.
 
 ## Browser checks
 

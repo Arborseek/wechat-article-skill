@@ -113,7 +113,6 @@ def main() -> None:
         "inserted_visual_ids": inserted,
         "warnings": validation["warnings"],
         "preservation": preservation,
-        "database_updated": False,
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

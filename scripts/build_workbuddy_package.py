@@ -15,8 +15,8 @@ WORKBUDDY_FRONTMATTER = """---
 name: wechat-article-skill
 display_name: 微信公众号智能创作与排版
 display_name_en: WeChat Article Studio
-description: 研究、撰写、配图、排版并检查微信公众号文章，输出受控的 HTML 预览和正文片段。
-description_zh: 从主题研究、内容写作和配图决策，到受控 HTML 排版与发布前质量检查。
+description: 研究、撰写、配图、排版并检查微信公众号文章，输出可直接打开的完整 HTML 文件。
+description_zh: 从主题研究、内容写作和配图决策，到受控 HTML 排版与交付前质量检查。
 description_en: Research, write, illustrate, style, and quality-check WeChat public-account articles.
 category: writing
 version: 1.1.0

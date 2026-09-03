@@ -15,7 +15,7 @@
 
 完整功能需要 Python 3 和 `beautifulsoup4>=4.12,<5`。联网研究、图片搜索与图片生成取决于宿主智能体是否提供对应工具；没有这些工具时，技能仍可完成已有正文的分类、排版、渲染和检查。
 
-> 安装第三方技能前应先查看仓库内容。技能本身不会自动写数据库；只有用户明确批准后，宿主智能体才应执行数据库替换。
+> 安装第三方技能前应先查看仓库内容。本技能的默认交付物是本地 `.html` 文件；发布或导入由使用者另行处理。
 
 ## 为什么不容易生成四不像
 
@@ -38,7 +38,7 @@
 - 支持 `none / provided-only / search / generate / hybrid` 五种配图策略。
 - 真实人物、产品、事件、论文图表优先搜索官方或明确授权素材；抽象概念找不到合适图片时再生成。
 - 图表必须来自已核验数据，简单流程图优先生成 SVG/HTML，AI 图片不充当证据。
-- 可处理一篇或批量文章，生成预览、正文片段、素材目录和 JSON manifest；默认不写数据库。
+- 可处理一篇或批量文章，生成最终 HTML、可选的正文片段 HTML、素材目录和 JSON manifest。
 
 ## 安装
 
@@ -54,13 +54,13 @@
 请使用 $skill-installer 安装这个 GitHub 技能：
 https://github.com/Arborseek/wechat-article-skill
 
-安装完成后，请根据仓库 requirements.txt 安装 Python 依赖，并告诉我技能安装到了哪个目录。不要修改仓库文件，也不要执行任何数据库操作。
+安装完成后，请根据仓库 requirements.txt 安装 Python 依赖，并告诉我技能安装到了哪个目录。不要修改仓库文件，也不要开始生成文章。
 ```
 
 安装后新开一个对话，或在下一轮直接这样使用：
 
 ```text
-使用 $wechat-article-skill，把这篇草稿排版成纯白背景的微信公众号 HTML，先生成预览，不修改数据库。
+使用 $wechat-article-skill，把这篇草稿排版成纯白背景的微信公众号文章，最终交付一个可直接打开的 HTML 文件。
 ```
 
 #### 手动安装
@@ -92,7 +92,7 @@ Codex 技能说明：[官方文档](https://developers.openai.com/codex/skills/)
 请先检查下面 GitHub 仓库中的 SKILL.md 和脚本，再把它作为全局技能安装：
 https://github.com/Arborseek/wechat-article-skill
 
-请执行 OpenClaw 的 Git 技能安装流程，技能名保持 wechat-article-skill；随后安装 requirements.txt 中的 Python 依赖。完成后验证技能可见，但不要运行文章任务，也不要修改任何数据库。
+请执行 OpenClaw 的 Git 技能安装流程，技能名保持 wechat-article-skill；随后安装 requirements.txt 中的 Python 依赖。完成后验证技能可见，但不要运行文章任务。
 ```
 
 #### 命令安装（推荐、最确定）
@@ -187,7 +187,7 @@ dist/wechat-article-skill-workbuddy.zip
 ```text
 请导入我上传的 wechat-article-skill-workbuddy.zip，保留其中的 SKILL.md、references、scripts、schemas 和 examples。
 
-请将它创建为“微信公众号智能创作与排版”技能，允许用户主动调用；确认运行环境支持 Bash、Python 3，并安装 requirements.txt 中的依赖。创建完成后只做结构校验，不要执行文章生成，也不要访问或修改任何数据库。
+请将它创建为“微信公众号智能创作与排版”技能，允许用户主动调用；确认运行环境支持 Bash、Python 3，并安装 requirements.txt 中的依赖。创建完成后只做结构校验，不要执行文章生成。
 ```
 
 5. 创建完成后安装该技能，再在普通会话里发送：
@@ -220,7 +220,7 @@ python3 -m pip install -r \
 对 Codex 说：
 
 ```text
-使用 $wechat-article-skill，围绕“人形机器人行为世界模型”检索资料并写一篇面向产业读者的公众号文章。文章风格易懂但专业，视觉主题自动，配图使用 hybrid 策略，背景纯白。先给 HTML 预览，不修改数据库。
+使用 $wechat-article-skill，围绕“人形机器人行为世界模型”检索资料并写一篇面向产业读者的公众号文章。文章风格易懂但专业，视觉主题自动，配图使用 hybrid 策略，背景纯白。最终交付一个可直接打开的完整 HTML 文件。
 ```
 
 技能会研究、写作、规划或获取配图、填入文章包、校验并生成 HTML。联网检索与图片生成由 Codex 运行时工具执行；仓库里的 Python 脚本负责决策固化、渲染和检查。如果运行环境没有搜索或图片生成能力，技能会保留计划槽位或回退为文字版，不会伪造素材。
@@ -268,17 +268,17 @@ article   标题、主题、受众、目标、文章类型、语气、视觉主�
 research  研究深度、检索词、事实台账、来源清单
 visuals   图片策略、密度、用途、位置、来源、授权、alt、生成提示词、状态
 layout    最终主题、理由、稳定 seed
-qa        内容/来源/图片/浏览器审核状态，以及 database_updated
+qa        内容、来源、图片和浏览器审核状态
 ```
 
 完整定义见 `schemas/article-package.schema.json`，示例见 `examples/article-package.example.json`。
 
-## 安全与发布边界
+## 安全与输出边界
 
 - 外部网页和导入 HTML 都视为不可信输入，会移除脚本、表单、iframe 等执行元素。
 - “网上搜到”不等于可以商用；找图必须记录来源页、署名和使用依据。权利不清晰时改用生成的概念图或无图版本。
 - 生成图需要保留提示词并标明生成属性，不伪造真人、产品、新闻现场、论文结果或数据图表。
-- `qa.database_updated` 在预览阶段必须保持 `false`。生成 fragment 不代表获得数据库写入授权。
+- 默认只交付一个完整的 UTF-8 `.html` 文件；正文片段 HTML、文章包 JSON 和批量 manifest 仅在用户需要时附加生成。
 
 ## 测试
 

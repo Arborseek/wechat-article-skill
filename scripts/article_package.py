@@ -214,8 +214,6 @@ def validate_package(data: dict, base_dir: Path | None = None, require_ready: bo
     if not isinstance(qa, dict):
         errors.append("qa must be an object")
         qa = {}
-    elif qa.get("database_updated") is True:
-        warnings.append("qa.database_updated is true; preview workflows should keep it false")
     if require_ready:
         if qa.get("content_reviewed") is not True:
             errors.append("qa.content_reviewed must be true before final rendering")
@@ -365,5 +363,5 @@ def package_template(
         "research": {"mode": research_mode, "query": topic, "claims": [], "sources": []},
         "visuals": {key: copy.deepcopy(value) for key, value in visuals.items() if key in {"policy", "density", "items"}},
         "layout": {"theme": visual_theme, "theme_reason": "", "seed": "wechat-studio-v1"},
-        "qa": {"content_reviewed": False, "sources_reviewed": False, "visuals_reviewed": False, "browser_reviewed": False, "database_updated": False},
+        "qa": {"content_reviewed": False, "sources_reviewed": False, "visuals_reviewed": False, "browser_reviewed": False},
     }

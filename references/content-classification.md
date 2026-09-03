@@ -64,6 +64,6 @@ The seed adds only tiny deterministic tie-breaking jitter. It must never overpow
 
 ## Override rules
 
-Honor an explicit user theme. Preserve an already approved `theme` or `style_id` from a manifest/database. Reclassify only when content changed materially or the user asks for it.
+Honor an explicit user theme. Preserve an already approved `theme` or `style_id` from a manifest. Reclassify only when content changed materially or the user asks for it.
 
 Do not use visually loud event/launch treatments for sensitive, legal, medical, memorial, or crisis content without an explicit editorial decision.

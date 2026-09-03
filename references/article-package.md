@@ -1,12 +1,12 @@
 # Article package contract
 
-The article package is the handoff between creative reasoning and deterministic output. It prevents silent changes to tone, theme, claims, images, and database state.
+The article package is the handoff between creative reasoning and deterministic output. It prevents silent changes to tone, theme, claims, and images.
 
 The canonical schema is [../schemas/article-package.schema.json](../schemas/article-package.schema.json). A minimal sample is [../examples/article-package.example.json](../examples/article-package.example.json).
 
 ## State flow
 
-`topic/draft -> researched package -> visual plan -> approved assets -> validated package -> rendered preview -> browser-reviewed preview -> approved fragment`
+`topic/draft -> researched package -> visual plan -> approved assets -> validated package -> rendered HTML -> browser-reviewed HTML`
 
 Visual item states:
 
@@ -27,6 +27,6 @@ Final rendering with `--require-ready` rejects unfinished research, unreviewed c
 
 Changing an approved theme, source, image, or claim requires updating the package and rerunning validation. Never patch the final HTML as the only source of truth.
 
-## Publication boundary
+## Output boundary
 
-The package stores `qa.database_updated`. Keep it `false` throughout research, generation, and preview. A database write is a separate user-approved operation; rendering a fragment does not authorize it.
+The article package is an internal planning artifact. The default user-facing deliverable is the complete standalone HTML file. Only expose the package JSON or a body-fragment HTML when the user requests it or a batch workflow needs it.
