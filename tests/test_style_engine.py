@@ -80,6 +80,24 @@ class HtmlTransformationTests(unittest.TestCase):
         self.assertIn("background: #fff", html)
         self.assertIn('class="theme-cobalt-journal"', html)
 
+    def test_video_is_promoted_out_of_misused_quote_container(self):
+        raw = """<article><blockquote><div><strong><video><source src="https://example.com/demo.mp4" type="video/mp4"></video></strong></div><p>正文引言</p></blockquote></article>"""
+        with tempfile.TemporaryDirectory() as tmp:
+            fragment, _ = engine.sanitize(raw, "视频文章", Path(tmp), Path(tmp))
+        soup = engine.BeautifulSoup(fragment, "html.parser")
+        video = soup.find("video")
+        self.assertIsNotNone(video)
+        self.assertIsNone(video.find_parent("blockquote"))
+        self.assertIsNone(soup.find("blockquote"))
+        self.assertEqual(video.get("controls"), "controls")
+        self.assertEqual(video.find("source").get("src"), "https://example.com/demo.mp4")
+
+    def test_video_css_uses_full_width_sixteen_by_nine_player(self):
+        css = engine.css_for("cobalt-journal")
+        self.assertIn(".article-body video", css)
+        self.assertIn("aspect-ratio: 16 / 9", css)
+        self.assertIn("word-break: break-all", css)
+
 
 if __name__ == "__main__":
     unittest.main()

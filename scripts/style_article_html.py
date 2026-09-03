@@ -104,7 +104,7 @@ body {
 }
 .page { width: min(100%, 717px); margin: 0 auto; padding: 20px; background: #fff; }
 .preview-nav { display: inline-block; margin: 0 0 20px; color: var(--primary); font-size: 13px; line-height: 20px; text-decoration: none; }
-.article-title { margin: 0 0 14px; color: rgba(0,0,0,.9); font-size: 22px; font-weight: 500; line-height: 1.4; }
+.article-title { margin: 0 0 14px; color: rgba(0,0,0,.9); font-size: 22px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; word-break: break-all; }
 .article-meta { margin: 0 0 22px; color: rgba(0,0,0,.5); font-size: 14px; line-height: 1.55; }
 .cover { display: block; width: 100%; height: auto; margin: 0 0 22px; border: 0; }
 .article-body { color: var(--ink); font-size: BODY_SIZE; font-weight: 400; line-height: BODY_LINE; letter-spacing: .015em; text-align: justify; overflow-wrap: anywhere; }
@@ -112,7 +112,8 @@ body {
 .article-body a { color: var(--link); text-decoration: none; overflow-wrap: anywhere; }
 .article-body strong, .article-body b { color: inherit; font-weight: 700; }
 .article-body .accent { color: var(--accent); }
-.article-body img, .article-body video { display: block; width: auto; max-width: 100%; height: auto; margin: 16px auto 8px; border: 0; }
+.article-body img { display: block; width: auto; max-width: 100%; height: auto; margin: 16px auto 8px; border: 0; }
+.article-body video { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; margin: 16px 0 20px; border: 0; background: #fff; }
 .editorial-figure { margin: 22px 0 20px; background: #fff; }
 .editorial-figure img { margin: 0 auto 8px; }
 .editorial-figure figcaption { margin-bottom: 0 !important; }
@@ -381,6 +382,22 @@ def sanitize(fragment: str, title: str, source_dir: Path, output_dir: Path) -> t
     before_text = normalize_text(soup.get_text(" ", strip=True))
     promote_visual_headings(soup)
 
+    # Some rich-text editors misuse blockquote as a generic container around
+    # a video and its introduction. Such content is not a quotation and must
+    # not inherit the theme's quotation rail. Promote video-only wrappers so
+    # downstream clients can split rich text and native video safely.
+    for quote in list(soup.find_all("blockquote")):
+        if quote.find("video"):
+            quote.unwrap()
+    for video in list(soup.find_all("video")):
+        while video.parent is not soup and video.parent.name in {"div", "p", "strong", "b"}:
+            parent = video.parent
+            other_text = normalize_text(parent.get_text(" ", strip=True))
+            other_tags = [node for node in parent.find_all(recursive=False) if node is not video and node.name != "source"]
+            if other_text or other_tags:
+                break
+            parent.unwrap()
+
     allowed = {
         "a": {"href", "title"}, "img": {"src", "data-src", "alt", "title", "width", "height"},
         "video": {"src", "poster", "controls"}, "source": {"src", "type"},
@@ -417,6 +434,8 @@ def sanitize(fragment: str, title: str, source_dir: Path, output_dir: Path) -> t
                 node.decompose()
                 continue
             node["alt"] = node.get("alt") or "文章插图"
+        elif node.name == "video":
+            node["controls"] = "controls"
 
     first_content = soup.find(["h1", "h2", "p"])
     if first_content and normalize_text(first_content.get_text(" ", strip=True)) == normalize_text(title):
