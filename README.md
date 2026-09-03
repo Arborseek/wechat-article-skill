@@ -6,6 +6,14 @@
 
 当前稳定版本：[`v1.1.1`](https://github.com/Arborseek/wechat-article-skill/releases/tag/v1.1.1)。下面的安装示例默认锁定该 tag，避免 `main` 后续更新导致行为变化。
 
+## 排版效果
+
+以下截图由本仓库的确定性渲染器直接生成，展示 390 px 移动端视口下的三种内容风格。
+
+| 工程蓝图 · 技术解读 | 紫色对话 · 人物访谈 | 橙色发布 · 产品快讯 |
+| --- | --- | --- |
+| <img src="assets/readme/technical-blueprint.png" alt="工程蓝图技术文章排版效果" width="260"> | <img src="assets/readme/interview-violet.png" alt="紫色人物访谈排版效果" width="260"> | <img src="assets/readme/launch-orange.png" alt="橙色产品发布排版效果" width="260"> |
+
 ## 平台支持
 
 | 平台 | 支持程度 | 推荐安装方式 | 技能调用方式 |
