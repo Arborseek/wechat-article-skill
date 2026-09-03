@@ -1,6 +1,21 @@
 # WeChat Article Skill
 
-一个可上传 GitHub、可直接安装到 Codex 的完整微信公众号创作与 HTML 排版技能。它不只写提示词，而是把创作拆成“内容判断 + 联网研究 + 文章契约 + 配图决策 + 确定性渲染 + 自动检查 + 浏览器验收”。
+一个面向 **Codex、OpenClaw、Hermes Agent 和 WorkBuddy** 的微信公众号创作与 HTML 排版技能。它不只写提示词，而是把创作拆成“内容判断 + 联网研究 + 文章契约 + 配图决策 + 确定性渲染 + 自动检查 + 浏览器验收”。
+
+仓库地址：<https://github.com/Arborseek/wechat-article-skill>
+
+## 平台支持
+
+| 平台 | 支持程度 | 推荐安装方式 | 技能调用方式 |
+| --- | --- | --- | --- |
+| Codex | 完整支持 | 在聊天中让 `$skill-installer` 从 GitHub 安装 | `$wechat-article-skill` |
+| OpenClaw | 完整支持 | `openclaw skills install git:...` | `$wechat-article-skill` 或自然语言 |
+| Hermes Agent | 完整支持 | 聊天中 `/skills install <SKILL.md URL>` | `/wechat-article-skill` 或自然语言 |
+| WorkBuddy | 完整技能包 | 生成兼容 ZIP，在技能市场的创建对话中上传 | 在会话中选择/调用已安装技能 |
+
+完整功能需要 Python 3 和 `beautifulsoup4>=4.12,<5`。联网研究、图片搜索与图片生成取决于宿主智能体是否提供对应工具；没有这些工具时，技能仍可完成已有正文的分类、排版、渲染和检查。
+
+> 安装第三方技能前应先查看仓库内容。技能本身不会自动写数据库；只有用户明确批准后，宿主智能体才应执行数据库替换。
 
 ## 为什么不容易生成四不像
 
@@ -27,11 +42,176 @@
 
 ## 安装
 
-```bash
-git clone <你的仓库地址>
-python3 -m pip install -r requirements.txt
-cp -R . ~/.codex/skills/wechat-article-skill
+下面每个平台都同时给出“直接发消息安装”和“手动安装”。对话式安装要求当前智能体拥有联网、终端和技能目录写入权限；如果权限不足，使用对应的手动方式。
+
+### Codex
+
+#### 直接发消息安装（推荐）
+
+把下面这段原样发给 Codex：
+
+```text
+请使用 $skill-installer 安装这个 GitHub 技能：
+https://github.com/Arborseek/wechat-article-skill
+
+安装完成后，请根据仓库 requirements.txt 安装 Python 依赖，并告诉我技能安装到了哪个目录。不要修改仓库文件，也不要执行任何数据库操作。
 ```
+
+安装后新开一个对话，或在下一轮直接这样使用：
+
+```text
+使用 $wechat-article-skill，把这篇草稿排版成纯白背景的微信公众号 HTML，先生成预览，不修改数据库。
+```
+
+#### 手动安装
+
+```bash
+git clone https://github.com/Arborseek/wechat-article-skill.git \
+  ~/.codex/skills/wechat-article-skill
+python3 -m pip install -r \
+  ~/.codex/skills/wechat-article-skill/requirements.txt
+```
+
+如果设置了 `CODEX_HOME`，请将 `~/.codex` 替换为该目录。安装后重新开始一次 Codex 会话，使技能列表刷新。
+
+更新：
+
+```bash
+git -C ~/.codex/skills/wechat-article-skill pull --ff-only
+```
+
+Codex 技能说明：[官方文档](https://developers.openai.com/codex/skills/)。
+
+### OpenClaw
+
+#### 直接发消息安装
+
+把下面这段发给具有终端权限的 OpenClaw 智能体：
+
+```text
+请先检查下面 GitHub 仓库中的 SKILL.md 和脚本，再把它作为全局技能安装：
+https://github.com/Arborseek/wechat-article-skill
+
+请执行 OpenClaw 的 Git 技能安装流程，技能名保持 wechat-article-skill；随后安装 requirements.txt 中的 Python 依赖。完成后验证技能可见，但不要运行文章任务，也不要修改任何数据库。
+```
+
+#### 命令安装（推荐、最确定）
+
+全局安装，供本机所有 OpenClaw 智能体使用：
+
+```bash
+openclaw skills install \
+  git:Arborseek/wechat-article-skill@main \
+  --global
+python3 -m pip install -r \
+  ~/.openclaw/skills/wechat-article-skill/requirements.txt
+```
+
+只安装到当前工作区：
+
+```bash
+openclaw skills install git:Arborseek/wechat-article-skill@main
+python3 -m pip install -r \
+  ./skills/wechat-article-skill/requirements.txt
+```
+
+Git 安装不会被 `openclaw skills update` 自动跟踪；更新时重新执行同一条安装命令。新会话中可这样调用：
+
+```text
+$wechat-article-skill 请根据这个主题写一篇公众号文章，视觉主题自动，配图策略 hybrid，先输出 HTML 预览。
+```
+
+OpenClaw 技能安装说明：[官方文档](https://github.com/openclaw/openclaw/blob/main/docs/tools/skills.md#installing-from-clawhub)。
+
+### Hermes Agent
+
+#### 在聊天中安装（推荐）
+
+在 Hermes 会话里发送：
+
+```text
+/skills install https://raw.githubusercontent.com/Arborseek/wechat-article-skill/main/SKILL.md --name wechat-article-skill --now
+```
+
+Hermes 会从 `SKILL.md` URL 安装技能及其中引用的支持文件。`--now` 会立即刷新当前会话的技能缓存；也可以省略它，然后执行 `/reset` 或开始新会话。
+
+如果当前版本未完整取得 `scripts/`、`references/` 等目录，请使用下面的整仓手动安装方式：
+
+```bash
+git clone https://github.com/Arborseek/wechat-article-skill.git \
+  ~/.hermes/skills/wechat-article-skill
+python3 -m pip install -r \
+  ~/.hermes/skills/wechat-article-skill/requirements.txt
+```
+
+验证并调用：
+
+```text
+/skills search wechat-article-skill
+/wechat-article-skill 把这篇文章整理成适合手机阅读的微信公众号 HTML，先给预览。
+```
+
+也可以使用自然语言：
+
+```text
+请使用 wechat-article-skill，根据“人形机器人行为世界模型”研究并撰写公众号文章，背景纯白，主题自动选择。
+```
+
+Hermes 技能安装说明：[官方文档](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills#installing-from-the-hub)。
+
+### WorkBuddy
+
+WorkBuddy 的技能上传结构和元数据与 Codex 略有不同。不要直接上传 GitHub 自动生成的源码 ZIP；先生成专用包：
+
+```bash
+git clone https://github.com/Arborseek/wechat-article-skill.git
+cd wechat-article-skill
+python3 scripts/build_workbuddy_package.py
+```
+
+产物位置：
+
+```text
+dist/wechat-article-skill-workbuddy.zip
+```
+
+打包脚本会生成 WorkBuddy 要求的 `skills/wechat-article-skill/` 目录，并加入 `description_zh`、`description_en`、`version`、`author` 等元数据，同时保持根目录的 Codex 标准 `SKILL.md` 不变。
+
+#### 通过创建技能对话安装
+
+1. 进入 WorkBuddy 左侧的“专家 · 技能 · 连接器”。
+2. 打开“技能市场”，点击右上角“添加技能 → 创建技能”。
+3. 上传刚生成的 `wechat-article-skill-workbuddy.zip`。
+4. 在创建技能的对话中发送：
+
+```text
+请导入我上传的 wechat-article-skill-workbuddy.zip，保留其中的 SKILL.md、references、scripts、schemas 和 examples。
+
+请将它创建为“微信公众号智能创作与排版”技能，允许用户主动调用；确认运行环境支持 Bash、Python 3，并安装 requirements.txt 中的依赖。创建完成后只做结构校验，不要执行文章生成，也不要访问或修改任何数据库。
+```
+
+5. 创建完成后安装该技能，再在普通会话里发送：
+
+```text
+请使用“微信公众号智能创作与排版”技能，把我上传的文章整理为纯白背景的微信公众号 HTML，先输出预览文件。
+```
+
+如果该技能以后发布到 WorkBuddy 技能市场，普通用户只需进入技能市场，点击技能卡片右上角的 `+` 安装，无需上传 ZIP。
+
+WorkBuddy 技能结构说明：[官方文档](https://open.workbuddy.cn/en/docs/skill)。
+
+### 通用手动安装
+
+对于其他兼容 Agent Skills / `SKILL.md` 的智能体，可以把完整仓库克隆到其技能目录：
+
+```bash
+git clone https://github.com/Arborseek/wechat-article-skill.git \
+  /path/to/agent/skills/wechat-article-skill
+python3 -m pip install -r \
+  /path/to/agent/skills/wechat-article-skill/requirements.txt
+```
+
+必须复制完整仓库，不能只复制 `SKILL.md`，因为确定性排版、文章契约、渲染和检查依赖 `scripts/`、`references/`、`schemas/` 与 `examples/`。
 
 ## 三种常用入口
 
