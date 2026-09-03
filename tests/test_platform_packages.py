@@ -21,16 +21,16 @@ class WorkBuddyPackageTests(unittest.TestCase):
 
             with ZipFile(output) as archive:
                 names = set(archive.namelist())
-                prefix = "skills/wechat-article-skill/"
                 expected = {
-                    prefix + "SKILL.md",
-                    prefix + "requirements.txt",
-                    prefix + "references/style-system.md",
-                    prefix + "scripts/style_article_html.py",
-                    prefix + "schemas/article-package.schema.json",
+                    "SKILL.md",
+                    "requirements.txt",
+                    "references/style-system.md",
+                    "scripts/style_article_html.py",
+                    "schemas/article-package.schema.json",
                 }
                 self.assertFalse(expected - names)
-                manifest = archive.read(prefix + "SKILL.md").decode("utf-8")
+                self.assertFalse(any(name.startswith("skills/") for name in names))
+                manifest = archive.read("SKILL.md").decode("utf-8")
 
             for field in (
                 "description_zh:",
@@ -38,6 +38,7 @@ class WorkBuddyPackageTests(unittest.TestCase):
                 "version:",
                 "author:",
                 "user-invocable: true",
+                "version: 1.1.1",
             ):
                 self.assertIn(field, manifest)
             self.assertEqual(manifest.count("# WeChat Article Skill"), 1)

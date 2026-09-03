@@ -19,7 +19,7 @@ description: 研究、撰写、配图、排版并检查微信公众号文章，�
 description_zh: 从主题研究、内容写作和配图决策，到受控 HTML 排版与交付前质量检查。
 description_en: Research, write, illustrate, style, and quality-check WeChat public-account articles.
 category: writing
-version: 1.1.0
+version: 1.1.1
 author: Arborseek
 user-invocable: true
 ---
@@ -66,8 +66,10 @@ def build_package(repo_root: Path, output: Path) -> Path:
     output.parent.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="wechat-skill-workbuddy-") as temp_dir:
-        package_root = Path(temp_dir) / "skills" / SKILL_NAME
-        package_root.mkdir(parents=True)
+        # WorkBuddy's upload dialog inspects the ZIP root for SKILL.md.
+        # A nested skills/<name>/SKILL.md layout is valid as a catalog example
+        # but is rejected by the direct importer.
+        package_root = Path(temp_dir)
 
         for relative in INCLUDED_PATHS:
             if relative == "SKILL.md":
@@ -80,7 +82,7 @@ def build_package(repo_root: Path, output: Path) -> Path:
         )
 
         with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            for path in sorted((Path(temp_dir) / "skills").rglob("*")):
+            for path in sorted(Path(temp_dir).rglob("*")):
                 if path.is_file():
                     archive.write(path, path.relative_to(temp_dir))
 

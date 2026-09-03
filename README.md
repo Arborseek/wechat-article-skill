@@ -4,7 +4,7 @@
 
 仓库地址：<https://github.com/Arborseek/wechat-article-skill>
 
-当前稳定版本：[`v1.1.0`](https://github.com/Arborseek/wechat-article-skill/releases/tag/v1.1.0)。下面的安装示例默认锁定该 tag，避免 `main` 后续更新导致行为变化。
+当前稳定版本：[`v1.1.1`](https://github.com/Arborseek/wechat-article-skill/releases/tag/v1.1.1)。下面的安装示例默认锁定该 tag，避免 `main` 后续更新导致行为变化。
 
 ## 平台支持
 
@@ -56,7 +56,7 @@
 请使用 $skill-installer 安装这个 GitHub 技能，并固定到稳定版本：
 - repo: Arborseek/wechat-article-skill
 - path: .
-- ref: v1.1.0
+- ref: v1.1.1
 - name: wechat-article-skill
 
 安装完成后，请根据仓库 requirements.txt 安装 Python 依赖，并告诉我技能安装到了哪个目录。不要修改仓库文件，也不要开始生成文章。
@@ -71,7 +71,7 @@
 #### 手动安装
 
 ```bash
-git clone --branch v1.1.0 --depth 1 \
+git clone --branch v1.1.1 --depth 1 \
   https://github.com/Arborseek/wechat-article-skill.git \
   ~/.codex/skills/wechat-article-skill
 python3 -m pip install -r \
@@ -80,11 +80,11 @@ python3 -m pip install -r \
 
 如果设置了 `CODEX_HOME`，请将 `~/.codex` 替换为该目录。安装后重新开始一次 Codex 会话，使技能列表刷新。
 
-升级时，将 `v1.1.0` 替换成新的稳定 tag 后重新安装。需要切换现有目录时：
+升级时，将 `v1.1.1` 替换成新的稳定 tag 后重新安装。需要切换现有目录时：
 
 ```bash
 git -C ~/.codex/skills/wechat-article-skill fetch --tags
-git -C ~/.codex/skills/wechat-article-skill checkout v1.1.0
+git -C ~/.codex/skills/wechat-article-skill checkout v1.1.1
 ```
 
 Codex 技能说明：[官方文档](https://developers.openai.com/codex/skills/)。
@@ -97,7 +97,7 @@ Codex 技能说明：[官方文档](https://developers.openai.com/codex/skills/)
 
 ```text
 请先检查下面 GitHub 仓库中的 SKILL.md 和脚本，再把它作为全局技能安装：
-https://github.com/Arborseek/wechat-article-skill/tree/v1.1.0
+https://github.com/Arborseek/wechat-article-skill/tree/v1.1.1
 
 请执行 OpenClaw 的 Git 技能安装流程，技能名保持 wechat-article-skill；随后安装 requirements.txt 中的 Python 依赖。完成后验证技能可见，但不要运行文章任务。
 ```
@@ -108,7 +108,7 @@ https://github.com/Arborseek/wechat-article-skill/tree/v1.1.0
 
 ```bash
 openclaw skills install \
-  git:Arborseek/wechat-article-skill@v1.1.0 \
+  git:Arborseek/wechat-article-skill@v1.1.1 \
   --global
 python3 -m pip install -r \
   ~/.openclaw/skills/wechat-article-skill/requirements.txt
@@ -117,7 +117,7 @@ python3 -m pip install -r \
 只安装到当前工作区：
 
 ```bash
-openclaw skills install git:Arborseek/wechat-article-skill@v1.1.0
+openclaw skills install git:Arborseek/wechat-article-skill@v1.1.1
 python3 -m pip install -r \
   ./skills/wechat-article-skill/requirements.txt
 ```
@@ -137,7 +137,7 @@ OpenClaw 技能安装说明：[官方文档](https://github.com/openclaw/opencla
 在 Hermes 会话里发送：
 
 ```text
-/skills install https://raw.githubusercontent.com/Arborseek/wechat-article-skill/v1.1.0/SKILL.md --name wechat-article-skill --now
+/skills install https://raw.githubusercontent.com/Arborseek/wechat-article-skill/v1.1.1/SKILL.md --name wechat-article-skill --now
 ```
 
 Hermes 会从 `SKILL.md` URL 安装技能及其中引用的支持文件。`--now` 会立即刷新当前会话的技能缓存；也可以省略它，然后执行 `/reset` 或开始新会话。
@@ -145,7 +145,7 @@ Hermes 会从 `SKILL.md` URL 安装技能及其中引用的支持文件。`--now
 如果当前版本未完整取得 `scripts/`、`references/` 等目录，请使用下面的整仓手动安装方式：
 
 ```bash
-git clone --branch v1.1.0 --depth 1 \
+git clone --branch v1.1.1 --depth 1 \
   https://github.com/Arborseek/wechat-article-skill.git \
   ~/.hermes/skills/wechat-article-skill
 python3 -m pip install -r \
@@ -172,7 +172,7 @@ Hermes 技能安装说明：[官方文档](https://hermes-agent.nousresearch.com
 WorkBuddy 的技能上传结构和元数据与 Codex 略有不同。不要直接上传 GitHub 自动生成的源码 ZIP；先生成专用包：
 
 ```bash
-git clone --branch v1.1.0 --depth 1 \
+git clone --branch v1.1.1 --depth 1 \
   https://github.com/Arborseek/wechat-article-skill.git
 cd wechat-article-skill
 python3 scripts/build_workbuddy_package.py
@@ -184,9 +184,9 @@ python3 scripts/build_workbuddy_package.py
 dist/wechat-article-skill-workbuddy.zip
 ```
 
-也可以直接从 [`v1.1.0` Release](https://github.com/Arborseek/wechat-article-skill/releases/tag/v1.1.0) 下载预构建的 `wechat-article-skill-workbuddy.zip`，无需先克隆仓库。
+也可以直接从 [`v1.1.1` Release](https://github.com/Arborseek/wechat-article-skill/releases/tag/v1.1.1) 下载预构建的 `wechat-article-skill-workbuddy.zip`，无需先克隆仓库。
 
-打包脚本会生成 WorkBuddy 要求的 `skills/wechat-article-skill/` 目录，并加入 `description_zh`、`description_en`、`version`、`author` 等元数据，同时保持根目录的 Codex 标准 `SKILL.md` 不变。
+打包脚本会让 `SKILL.md` 直接位于 ZIP 根目录，并在同级放置 `references/`、`scripts/`、`schemas/` 和 `examples/`。它还会加入 WorkBuddy 要求的 `description_zh`、`description_en`、`version`、`author` 等元数据，同时保持仓库中的 Codex 标准 `SKILL.md` 不变。
 
 #### 通过创建技能对话安装
 
@@ -216,7 +216,7 @@ WorkBuddy 技能结构说明：[官方文档](https://open.workbuddy.cn/en/docs/
 对于其他兼容 Agent Skills / `SKILL.md` 的智能体，可以把完整仓库克隆到其技能目录：
 
 ```bash
-git clone --branch v1.1.0 --depth 1 \
+git clone --branch v1.1.1 --depth 1 \
   https://github.com/Arborseek/wechat-article-skill.git \
   /path/to/agent/skills/wechat-article-skill
 python3 -m pip install -r \
